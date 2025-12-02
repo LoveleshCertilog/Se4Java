@@ -1,0 +1,52 @@
+package org.example;
+import java.lang.*;
+
+import static java.lang.Thread.sleep;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+public class Main
+{
+    public static void main(String[] args)
+    {
+        try{
+            // Create a new instance of the ChromeDriver
+            ChromeOptions options = new ChromeOptions();
+            WebDriver driver = new ChromeDriver(options);
+
+            // Navigate to the login page
+            driver.get("https://www.saucedemo.com/");
+
+
+        int whileLimit =0;
+        String WDState = ((JavascriptExecutor) driver).executeScript("return document.readyState;").toString();
+        while (!WDState.toUpperCase().equals("COMPLETE") && whileLimit<180)
+        {
+            sleep(1000);
+            whileLimit++;
+        }
+            WebElement username = driver.findElement(By.xpath(".//*[contains(@id,'user')]"));
+            username.sendKeys("standard_user");
+
+            driver.findElement(By.cssSelector("#password")).sendKeys("secret_sauce");
+            driver.findElement(By.id("login-button")).click();
+
+            // Verify that the user is logged in by checking for the presence of the inventory container using a relative locator
+            WebElement inventoryContainer = driver.findElement(By.className("inventory_container"));
+            if (inventoryContainer.isDisplayed())
+            {
+                System.out.println("Login successful!");
+            }
+            else
+            {
+                System.out.println("Login failed!");
+            }
+            driver.quit();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Caught Exception: " + e.toString());
+        }
+    }
+}
